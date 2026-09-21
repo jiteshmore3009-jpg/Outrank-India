@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Outrank India — India's Internet Leaderboard</title>
+    <meta
+      name="description"
+      content="Outrank India is a public pay-to-rank leaderboard for Indian websites and businesses."
+    />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23141A12'/%3E%3Ctext x='32' y='42' text-anchor='middle' font-size='28' font-family='Georgia' fill='%23D4A017'%3EO%3C/text%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="page-glow" aria-hidden="true"></div>
+
+    <header class="site-header">
+      <a class="brand" href="#top">
+        <span class="brand-mark" aria-hidden="true">OI</span>
+        <span class="brand-copy">
+          <strong>Outrank India</strong>
+          <small>Public ranking · Est. 2026</small>
+        </span>
+      </a>
+      <nav class="nav">
+        <a href="#board">Leaderboard</a>
+        <a href="#join">Join</a>
+      </nav>
+      <button class="btn btn-small js-open-join" type="button">Claim a rank</button>
+    </header>
+
+    <main id="top">
+      <section class="hero">
+        <p class="eyebrow">A public ranking for the Indian internet</p>
+        <h1>India's Internet Leaderboard</h1>
+        <p class="subtitle">Pay to claim your position.</p>
+        <p class="hero-note">
+          Open bids. The highest claimed rank sits at the top of India's most
+          visible web companies.
+        </p>
+        <button class="btn btn-large js-open-join" type="button">
+          Join the Leaderboard
+        </button>
+      </section>
+
+      <section class="board-section" id="board">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Live board</p>
+            <h2>Current rankings</h2>
+          </div>
+          <p class="section-aside">
+            Highest bid takes the top rank. Outbid to move a listing.
+          </p>
+        </div>
+        <p class="rank-toast" id="rank-toast" role="status" hidden></p>
+
+        <div class="board" role="list">
+          <article class="board-row board-row-head" aria-hidden="true">
+            <span>Rank</span>
+            <span>Business</span>
+            <span>Current bid</span>
+            <span></span>
+          </article>
+        </div>
+      </section>
+
+      <section class="join-section" id="join">
+        <div class="join-card">
+          <p class="eyebrow">New listing</p>
+          <h2>Join the Leaderboard</h2>
+          <p class="join-copy">
+            Tell us about your website. This prototype stores listings in the
+            shared database — no payments or accounts yet.
+          </p>
+          <button class="btn btn-large js-open-join" type="button" id="open-form">
+            Join the Leaderboard
+          </button>
+
+          <form class="join-form" id="join-form" hidden>
+            <label>
+              Website / business name
+              <input type="text" name="name" placeholder="e.g. Kaveri Coffee Co." required />
+            </label>
+            <label>
+              Website URL
+              <input type="url" name="url" placeholder="https://www.example.in" required />
+            </label>
+            <label>
+              Short description
+              <textarea
+                name="description"
+                rows="3"
+                placeholder="One line about what you do."
+                required
+              ></textarea>
+            </label>
+            <label>
+              Starting bid (₹)
+              <input
+                type="number"
+                name="bid"
+                min="1"
+                step="1"
+                placeholder="5000"
+                required
+              />
+            </label>
+            <div class="form-actions">
+              <button class="btn btn-large" type="submit">Submit listing</button>
+              <button class="btn btn-ghost" type="button" id="close-form">Cancel</button>
+            </div>
+            <p class="form-status" id="form-status" role="status" hidden></p>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p>Outrank India · Visual prototype · No payments or accounts yet</p>
+    </footer>
+
+    <dialog class="outbid-dialog" id="outbid-dialog">
+      <h3>Outbid</h3>
+      <p id="outbid-copy">Raise this listing on the board.</p>
+      <form id="outbid-form">
+        <label>
+          New bid (₹)
+          <input id="outbid-amount" type="number" name="bid" min="1" step="1" required />
+        </label>
+        <p class="dialog-note">No payment is taken in this prototype.</p>
+        <p class="form-error" id="outbid-error" role="alert" hidden></p>
+        <div class="form-actions">
+          <button class="btn" type="submit">Place bid</button>
+          <button class="btn btn-ghost" type="button" id="outbid-cancel">Cancel</button>
+        </div>
+      </form>
+      <p class="outbid-success" id="outbid-success" role="status" hidden></p>
+      <button class="btn" type="button" id="outbid-done" hidden>Done</button>
+    </dialog>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="./config.js"></script>
+    <script src="./app.js"></script>
+  </body>
+</html>
