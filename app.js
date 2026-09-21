@@ -129,14 +129,26 @@ function renderBoard(highlightId) {
     const title = href
       ? `<a href="${escapeHtml(href)}" target="_blank" rel="noopener noreferrer">${escapeHtml(listing.name)}</a>`
       : escapeHtml(listing.name);
+    let websiteLabel = "";
+    if (href) {
+      try {
+        websiteLabel = new URL(href).hostname.replace(/^www\./, "");
+      } catch {
+        websiteLabel = href;
+      }
+    }
+    const website = href
+      ? `<a class="listing-site" href="${escapeHtml(href)}" target="_blank" rel="noopener noreferrer">${escapeHtml(websiteLabel)}</a>`
+      : "";
     const row = document.createElement("article");
     row.className = `board-row${highlightId === listing.id ? " is-updated" : ""}`;
     row.dataset.id = listing.id;
     row.setAttribute("role", "listitem");
     row.innerHTML = `
-      <span class="rank-num ${rank <= 3 ? "top" : ""}">${String(rank).padStart(2, "0")}</span>
+      <span class="rank-num ${rank <= 3 ? "top" : ""}">#${rank}</span>
       <div class="listing">
         <h3>${title}</h3>
+        ${website}
         <p>${escapeHtml(listing.description)}</p>
       </div>
       <div class="bid">
