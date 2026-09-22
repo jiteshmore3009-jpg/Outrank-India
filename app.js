@@ -107,13 +107,79 @@ function showToast(message) {
 }
 
 function setFormStatus(message) {
+  if (!formStatus) return;
+  if (!message) {
+    formStatus.hidden = true;
+    formStatus.textContent = "";
+    return;
+  }
   formStatus.hidden = false;
   formStatus.textContent = message;
+}
+
+function currentTopBid() {
+  sortListings();
+  return listings[0] ? listings[0].bid : 0;
+}
+
+function claimFields() {
+  const valueOf = (name) => String(joinForm.querySelector(`[name="${name}"]`)?.value || "").trim();
+  return {
+    name: valueOf("name"),
+    url: valueOf("url"),
+    description: valueOf("description"),
+    bid: Math.floor(Number(valueOf("bid"))),
+  };
+}
+
+function showClaimStep(step) {
+  joinForm.querySelectorAll(".claim-step").forEach((panel) => {
+    panel.hidden = panel.dataset.step !== step;
+  });
+  joinForm.querySelectorAll(".claim-progress li").forEach((item) => {
+    item.classList.toggle("is-active", item.dataset.step === step || (step === "payment" && item.dataset.step === "review"));
+  });
+  setFormStatus("");
+}
+
+function refreshBidGuidance() {
+  const topBid = currentTopBid();
+  const leader = document.querySelector("#claim-leader");
+  const status = document.querySelector("#claim-bid-status");
+  const bidInput = joinForm.querySelector('input[name="bid"]');
+  const bid = Math.floor(Number(bidInput.value));
+
+  leader.textContent = `Current #1 bid: ${rupee.format(topBid || 0)}`;
+
+  if (!bidInput.value) {
+    status.textContent = "";
+    status.className = "claim-bid-status";
+    return false;
+  }
+
+  if (!Number.isFinite(bid) || bid <= topBid) {
+    status.textContent = "Your bid must be higher than the current #1 bid.";
+    status.className = "claim-bid-status is-error";
+    return false;
+  }
+
+  status.textContent = "You would currently rank #1.";
+  status.className = "claim-bid-status is-ok";
+  return true;
+}
+
+function fillReview() {
+  const draft = claimFields();
+  document.querySelector("#review-rank").textContent = "#1";
+  document.querySelector("#review-bid").textContent = rupee.format(draft.bid);
+  document.querySelector("#review-listing").textContent = draft.name;
 }
 
 function openJoinForm() {
   joinForm.hidden = false;
   openFormButton.hidden = true;
+  showClaimStep("details");
+  refreshBidGuidance();
   document.querySelector("#join").scrollIntoView({ behavior: "smooth", block: "start" });
   window.setTimeout(() => joinForm.querySelector("input").focus(), 250);
 }
@@ -265,52 +331,60 @@ openFormButtons.forEach((button) => {
 closeFormButton.addEventListener("click", () => {
   joinForm.hidden = true;
   openFormButton.hidden = false;
-  formStatus.hidden = true;
+  showClaimStep("details");
+  setFormStatus("");
 });
 
-joinForm.addEventListener("submit", async (event) => {
-  event.preventDefault();
-  const data = new FormData(joinForm);
-  const payload = {
-    name: String(data.get("name") || "").trim(),
-    website_url: String(data.get("url") || "").trim(),
-    description: String(data.get("description") || "").trim(),
-    bid_amount: Math.floor(Number(data.get("bid"))),
-  };
+joinForm.querySelector('input[name="bid"]').addEventListener("input", refreshBidGuidance);
 
-  if (!payload.name || !payload.website_url || !payload.description || payload.bid_amount < 1) {
-    setFormStatus("Enter a valid listing and starting bid.");
+document.querySelector("#claim-to-bid").addEventListener("click", () => {
+  const draft = claimFields();
+  const href = safeUrl(draft.url);
+  if (!draft.name || !href || !draft.description) {
+    setFormStatus("Enter a name, valid website URL, and short description.");
     return;
   }
+  joinForm.querySelector('input[name="url"]').value = href;
+  showClaimStep("bid");
+  refreshBidGuidance();
+  joinForm.querySelector('input[name="bid"]').focus();
+});
 
-  const submitButton = joinForm.querySelector('button[type="submit"]');
-  submitButton.disabled = true;
+document.querySelector("#claim-back-details").addEventListener("click", () => {
+  showClaimStep("details");
+  joinForm.querySelector('input[name="name"]').focus();
+});
 
-  try {
-    const { data: row, error } = await supabaseClient
-      .from(tableName)
-      .insert(payload)
-      .select("id, created_at, name, website_url, description, bid_amount")
-      .single();
-
-    if (error) throw error;
-
-    const listing = normalizeListing(row);
-    if (!listing) throw new Error("The new listing could not be read.");
-
-    listings.push(listing);
-    sortListings();
-    const rank = rankOf(listing.id);
-    renderBoard(listing.id);
-    setFormStatus(`${listing.name} is on the board. ${rankMessage(rank)}.`);
-    showToast(rankMessage(rank));
-    joinForm.reset();
-    document.querySelector("#board").scrollIntoView({ behavior: "smooth", block: "start" });
-  } catch (error) {
-    setFormStatus(error.message || "Could not save the listing.");
-  } finally {
-    submitButton.disabled = false;
+document.querySelector("#claim-to-review").addEventListener("click", () => {
+  if (!refreshBidGuidance()) {
+    setFormStatus("Your bid must be higher than the current #1 bid.");
+    return;
   }
+  fillReview();
+  showClaimStep("review");
+});
+
+document.querySelector("#claim-back-bid").addEventListener("click", () => {
+  showClaimStep("bid");
+  joinForm.querySelector('input[name="bid"]').focus();
+});
+
+document.querySelector("#claim-to-payment").addEventListener("click", () => {
+  if (!refreshBidGuidance()) {
+    showClaimStep("bid");
+    setFormStatus("Your bid must be higher than the current #1 bid.");
+    return;
+  }
+  showClaimStep("payment");
+});
+
+document.querySelector("#claim-edit-bid").addEventListener("click", () => {
+  showClaimStep("bid");
+  joinForm.querySelector('input[name="bid"]').focus();
+});
+
+document.querySelector("#claim-back-review").addEventListener("click", () => {
+  showClaimStep("review");
 });
 
 async function start() {

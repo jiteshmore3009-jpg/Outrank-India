@@ -89,50 +89,87 @@
 
       <section class="join-section" id="join">
         <div class="join-card">
-          <p class="eyebrow">New listing</p>
-          <h2>Claim a place on the board</h2>
+          <p class="eyebrow">Claim #1</p>
+          <h2>Claim your rank</h2>
           <p class="join-copy">
-            Add your website, set a starting bid, and take the rank that amount can hold.
+            Enter your listing, set a bid above the current leader, then review before payment.
           </p>
           <button class="btn btn-large js-open-join" type="button" id="open-form">
             CLAIM YOUR RANK
           </button>
 
-          <form class="join-form" id="join-form" hidden>
-            <label>
-              Website / business name
-              <input type="text" name="name" placeholder="e.g. Kaveri Coffee Co." required />
-            </label>
-            <label>
-              Website URL
-              <input type="url" name="url" placeholder="https://www.example.in" required />
-            </label>
-            <label>
-              Short description
-              <textarea
-                name="description"
-                rows="3"
-                placeholder="One line about what you do."
-                required
-              ></textarea>
-            </label>
-            <label>
-              Starting bid (₹)
-              <input
-                type="number"
-                name="bid"
-                min="1"
-                step="1"
-                placeholder="5000"
-                required
-              />
-            </label>
-            <div class="form-actions">
-              <button class="btn btn-large" type="submit">Submit listing</button>
-              <button class="btn btn-ghost" type="button" id="close-form">Cancel</button>
+          <div class="join-form" id="join-form" hidden>
+            <ol class="claim-progress" aria-label="Claim steps">
+              <li data-step="details" class="is-active">01 Details</li>
+              <li data-step="bid">02 Bid</li>
+              <li data-step="review">03 Review</li>
+            </ol>
+
+            <div class="claim-step" data-step="details">
+              <label>
+                Name / Business name
+                <input type="text" name="name" placeholder="Kaveri Coffee Co." autocomplete="organization" />
+              </label>
+              <label>
+                Website URL
+                <input type="url" name="url" placeholder="https://www.example.in" />
+              </label>
+              <label>
+                Short description
+                <textarea name="description" rows="3" placeholder="One line about what you do."></textarea>
+              </label>
+              <div class="form-actions">
+                <button class="btn btn-large" type="button" id="claim-to-bid">Continue</button>
+                <button class="btn btn-ghost" type="button" id="close-form">Cancel</button>
+              </div>
             </div>
+
+            <div class="claim-step" data-step="bid" hidden>
+              <p class="claim-leader" id="claim-leader"></p>
+              <p class="claim-rule">Your bid must be higher than the current #1 bid.</p>
+              <label>
+                Bid amount (₹)
+                <input type="number" name="bid" min="1" step="1" placeholder="65000" inputmode="numeric" />
+              </label>
+              <p class="claim-bid-status" id="claim-bid-status" role="status"></p>
+              <div class="form-actions">
+                <button class="btn btn-large" type="button" id="claim-to-review">Continue</button>
+                <button class="btn btn-ghost" type="button" id="claim-back-details">Back</button>
+              </div>
+            </div>
+
+            <div class="claim-step" data-step="review" hidden>
+              <dl class="claim-summary">
+                <div>
+                  <dt>Your rank</dt>
+                  <dd id="review-rank">#1</dd>
+                </div>
+                <div>
+                  <dt>Your bid</dt>
+                  <dd id="review-bid"></dd>
+                </div>
+                <div>
+                  <dt>Listing</dt>
+                  <dd id="review-listing"></dd>
+                </div>
+              </dl>
+              <div class="form-actions">
+                <button class="btn btn-large" type="button" id="claim-to-payment">Continue to payment</button>
+                <button class="btn btn-ghost" type="button" id="claim-back-bid">Back</button>
+              </div>
+            </div>
+
+            <div class="claim-step" data-step="payment" hidden>
+              <p class="payment-hold">Payment integration is being connected.</p>
+              <p class="join-copy">Nothing has been charged, and your listing has not been added to the board.</p>
+              <div class="form-actions">
+                <button class="btn btn-large" type="button" id="claim-edit-bid">Edit bid</button>
+                <button class="btn btn-ghost" type="button" id="claim-back-review">Back</button>
+              </div>
+            </div>
+
             <p class="form-status" id="form-status" role="status" hidden></p>
-          </form>
+          </div>
         </div>
       </section>
     </main>
@@ -162,6 +199,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="./config.js"></script>
-    <script src="./app.js"></script>
+    <script src="./app.js?v=claim-nopay-1"></script>
   </body>
 </html>

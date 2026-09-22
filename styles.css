@@ -33,7 +33,8 @@ h3,
 .brand,
 .brand-kicker,
 .rank-num,
-.trust-line {
+.trust-line,
+.claim-summary dd {
   font-family: "Cormorant Garamond", Georgia, serif;
   font-weight: 500;
 }
@@ -419,11 +420,92 @@ h1 {
   display: grid;
   gap: 16px;
   margin-top: 28px;
-  max-width: 560px;
+  max-width: 640px;
 }
 
 .join-form[hidden] {
   display: none;
+}
+
+.claim-progress {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 20px;
+  margin: 0 0 8px;
+  padding: 0;
+  list-style: none;
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.claim-progress .is-active {
+  color: var(--ink);
+}
+
+.claim-step {
+  display: grid;
+  gap: 16px;
+}
+
+.claim-leader,
+.claim-rule,
+.claim-bid-status,
+.payment-hold {
+  margin: 0;
+}
+
+.claim-leader {
+  font-size: 1.05rem;
+}
+
+.claim-rule {
+  color: var(--muted);
+}
+
+.claim-bid-status.is-ok {
+  color: var(--ink);
+}
+
+.claim-bid-status.is-error,
+.form-status {
+  color: #e8b4a8;
+}
+
+.claim-summary {
+  display: grid;
+  gap: 22px;
+  margin: 8px 0 12px;
+  padding: 24px 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.claim-summary div {
+  display: grid;
+  gap: 6px;
+}
+
+.claim-summary dt {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.claim-summary dd {
+  margin: 0;
+  font-size: clamp(2rem, 5vw, 3.2rem);
+  line-height: 1;
+}
+
+.payment-hold {
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  line-height: 1.15;
 }
 
 .join-form label,
