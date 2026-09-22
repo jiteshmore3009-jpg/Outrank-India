@@ -78,6 +78,29 @@
         </div>
       </section>
 
+      <section class="categories-section" id="categories">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Categories</p>
+            <h2>Browse the board by industry.</h2>
+          </div>
+          <p class="section-aside">The live board above shows every listing. Choose a category to explore it on its own.</p>
+        </div>
+        <nav class="category-nav" aria-label="Categories">
+          <a href="category.html?category=Technology">Technology</a>
+          <a href="category.html?category=FMCG">FMCG</a>
+          <a href="category.html?category=Real%20Estate">Real Estate</a>
+          <a href="category.html?category=Food%20%26%20Beverage">Food &amp; Beverage</a>
+          <a href="category.html?category=Fintech">Fintech</a>
+          <a href="category.html?category=D2C%20%2F%20Consumer%20Brands">D2C / Consumer Brands</a>
+          <a href="category.html?category=Media%20%26%20Entertainment">Media &amp; Entertainment</a>
+          <a href="category.html?category=Healthcare">Healthcare</a>
+          <a href="category.html?category=Automotive">Automotive</a>
+          <a href="category.html?category=Education">Education</a>
+          <a href="category.html?category=Other">Other</a>
+        </nav>
+      </section>
+
       <section class="cta-band">
         <h2>Think you deserve the top spot?</h2>
         <p>Outbid the current leader and claim your rank.</p>
@@ -94,7 +117,7 @@
           <p class="eyebrow">Claim #1</p>
           <h2>Claim your rank</h2>
           <p class="join-copy">
-            Enter your listing, set a bid above the current leader, then review before payment.
+            Enter your listing, choose a category, set a bid above the current leader, then review before payment.
           </p>
           <button class="btn btn-large js-open-join" type="button" id="open-form">
             CLAIM YOUR RANK
@@ -103,8 +126,9 @@
           <div class="join-form" id="join-form" hidden>
             <ol class="claim-progress" aria-label="Claim steps">
               <li data-step="details" class="is-active">01 Details</li>
-              <li data-step="bid">02 Bid</li>
-              <li data-step="review">03 Review</li>
+              <li data-step="category">02 Category</li>
+              <li data-step="bid">03 Bid</li>
+              <li data-step="review">04 Review</li>
             </ol>
 
             <div class="claim-step" data-step="details">
@@ -121,8 +145,32 @@
                 <textarea name="description" rows="3" placeholder="One line about what you do."></textarea>
               </label>
               <div class="form-actions">
-                <button class="btn btn-large" type="button" id="claim-to-bid">Continue</button>
+                <button class="btn btn-large" type="button" id="claim-to-category">Continue</button>
                 <button class="btn btn-ghost" type="button" id="close-form">Cancel</button>
+              </div>
+            </div>
+
+            <div class="claim-step" data-step="category" hidden>
+              <label>
+                Choose Category
+                <select name="category" required>
+                  <option value="" selected disabled>Select a category</option>
+                  <option value="Technology">Technology</option>
+                  <option value="FMCG">FMCG</option>
+                  <option value="Real Estate">Real Estate</option>
+                  <option value="Food & Beverage">Food &amp; Beverage</option>
+                  <option value="Fintech">Fintech</option>
+                  <option value="D2C / Consumer Brands">D2C / Consumer Brands</option>
+                  <option value="Media & Entertainment">Media &amp; Entertainment</option>
+                  <option value="Healthcare">Healthcare</option>
+                  <option value="Automotive">Automotive</option>
+                  <option value="Education">Education</option>
+                  <option value="Other">Other</option>
+                </select>
+              </label>
+              <div class="form-actions">
+                <button class="btn btn-large" type="button" id="claim-to-bid">Continue</button>
+                <button class="btn btn-ghost" type="button" id="claim-back-details">Back</button>
               </div>
             </div>
 
@@ -136,7 +184,7 @@
               <p class="claim-bid-status" id="claim-bid-status" role="status"></p>
               <div class="form-actions">
                 <button class="btn btn-large" type="button" id="claim-to-review">Continue</button>
-                <button class="btn btn-ghost" type="button" id="claim-back-details">Back</button>
+                <button class="btn btn-ghost" type="button" id="claim-back-category">Back</button>
               </div>
             </div>
 
@@ -149,6 +197,10 @@
                 <div>
                   <dt>Your bid</dt>
                   <dd id="review-bid"></dd>
+                </div>
+                <div>
+                  <dt>Category</dt>
+                  <dd id="review-category"></dd>
                 </div>
                 <div>
                   <dt>Listing</dt>
@@ -209,6 +261,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="./config.js"></script>
-    <script src="./app.js?v=claim-nopay-1"></script>
+    <script src="./app.js?v=category-board-1"></script>
   </body>
 </html>

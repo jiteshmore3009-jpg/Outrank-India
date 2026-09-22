@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Category — Outrank India</title>
+    <meta
+      name="description"
+      content="Companies ranked by their current paid placement on Outrank India."
+    />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23090909'/%3E%3Ctext x='32' y='42' text-anchor='middle' font-size='28' font-family='Georgia' fill='%23F5F5F5'%3EO%3C/text%3E%3C/svg%3E" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Manrope:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body data-page="category">
+    <header class="site-header">
+      <a class="brand" href="index.html">OUTRANK INDIA</a>
+      <nav class="nav">
+        <a class="nav-home" href="index.html">Home</a>
+        <a class="nav-about" href="about.html">About</a>
+        <a class="nav-contact" href="contact.html">Contact</a>
+        <a class="nav-categories" href="#categories">Categories</a>
+      </nav>
+      <a class="btn btn-small" href="index.html#join">Claim your rank</a>
+    </header>
+
+    <main class="category-page" id="top">
+      <p class="brand-kicker">Categories</p>
+      <h1 id="category-title">Top Companies in India</h1>
+      <p class="about-intro">Companies ranked by their current paid placement.</p>
+
+      <p class="rank-toast" id="rank-toast" role="status" hidden></p>
+
+      <div class="board" role="list">
+        <article class="board-row board-row-head" aria-hidden="true">
+          <span>Rank</span>
+          <span>Listing</span>
+          <span>Current bid</span>
+          <span></span>
+        </article>
+      </div>
+
+      <div class="category-empty" id="category-empty" hidden>
+        <p>No companies have claimed a position in this category yet.</p>
+        <a class="btn btn-large" href="index.html#join">CLAIM YOUR RANK</a>
+      </div>
+
+      <section class="categories-section" id="categories">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Categories</p>
+            <h2>Browse another industry.</h2>
+          </div>
+        </div>
+        <nav class="category-nav" aria-label="Categories">
+          <a href="category.html?category=Technology">Technology</a>
+          <a href="category.html?category=FMCG">FMCG</a>
+          <a href="category.html?category=Real%20Estate">Real Estate</a>
+          <a href="category.html?category=Food%20%26%20Beverage">Food &amp; Beverage</a>
+          <a href="category.html?category=Fintech">Fintech</a>
+          <a href="category.html?category=D2C%20%2F%20Consumer%20Brands">D2C / Consumer Brands</a>
+          <a href="category.html?category=Media%20%26%20Entertainment">Media &amp; Entertainment</a>
+          <a href="category.html?category=Healthcare">Healthcare</a>
+          <a href="category.html?category=Automotive">Automotive</a>
+          <a href="category.html?category=Education">Education</a>
+          <a href="category.html?category=Other">Other</a>
+        </nav>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <nav class="footer-nav" aria-label="Footer">
+        <a href="index.html">Home</a>
+        <a href="about.html">About</a>
+        <a href="contact.html">Contact</a>
+        <a href="terms.html">Terms &amp; Conditions</a>
+        <a href="privacy.html">Privacy Policy</a>
+        <a href="refund-policy.html">Refund Policy</a>
+      </nav>
+      <p>Outrank India</p>
+    </footer>
+
+    <dialog class="outbid-dialog" id="outbid-dialog">
+      <h3>Outbid</h3>
+      <p id="outbid-copy">Raise this listing on the board.</p>
+      <form id="outbid-form">
+        <label>
+          New bid (₹)
+          <input id="outbid-amount" type="number" name="bid" min="1" step="1" required />
+        </label>
+        <p class="dialog-note">No payment is taken in this prototype.</p>
+        <p class="form-error" id="outbid-error" role="alert" hidden></p>
+        <div class="form-actions">
+          <button class="btn" type="submit">Place bid</button>
+          <button class="btn btn-ghost" type="button" id="outbid-cancel">Cancel</button>
+        </div>
+      </form>
+      <p class="outbid-success" id="outbid-success" role="status" hidden></p>
+      <button class="btn" type="button" id="outbid-done" hidden>Done</button>
+    </dialog>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="./config.js"></script>
+    <script src="./app.js?v=category-board-1"></script>
+  </body>
+</html>

@@ -22,10 +22,49 @@ const outbidCancel = document.querySelector("#outbid-cancel");
 const outbidDone = document.querySelector("#outbid-done");
 const rankToast = document.querySelector("#rank-toast");
 
+const CATEGORIES = [
+  "Technology",
+  "FMCG",
+  "Real Estate",
+  "Food & Beverage",
+  "Fintech",
+  "D2C / Consumer Brands",
+  "Media & Entertainment",
+  "Healthcare",
+  "Automotive",
+  "Education",
+  "Other",
+];
+
+const isCategoryPage = document.body.dataset.page === "category";
+
 let listings = [];
 let activeListingId = null;
 let toastTimer = 0;
 let supabaseClient = null;
+
+function pageCategory() {
+  const raw = new URLSearchParams(window.location.search).get("category") || "";
+  const decoded = raw.trim();
+  return CATEGORIES.find((item) => item.toLowerCase() === decoded.toLowerCase()) || "";
+}
+
+function applyCategoryHeading() {
+  const category = pageCategory();
+  const title = document.querySelector("#category-title");
+  if (!title) return;
+  const heading = category ? `Top ${category} Companies in India` : "Top Companies in India";
+  title.textContent = heading;
+  document.title = `${heading} — Outrank India`;
+}
+
+function markActiveCategoryLinks() {
+  const current = pageCategory();
+  document.querySelectorAll(".category-nav a").forEach((link) => {
+    const value = new URL(link.href, window.location.href).searchParams.get("category") || "";
+    link.classList.toggle("is-current", Boolean(current) && value === current);
+  });
+}
 
 function isConfigured() {
   const url = String(config.url || "");
@@ -58,6 +97,7 @@ function normalizeListing(item) {
     description: String(item.description || "").trim(),
     bid: Math.floor(bid),
     createdAt: typeof created === "string" ? Date.parse(created) || 0 : Number(created) || 0,
+    category: String(item.category || "").trim(),
   };
 }
 
@@ -98,6 +138,7 @@ function safeUrl(url) {
 }
 
 function showToast(message) {
+  if (!rankToast) return;
   rankToast.hidden = false;
   rankToast.textContent = message;
   window.clearTimeout(toastTimer);
@@ -129,7 +170,13 @@ function claimFields() {
     url: valueOf("url"),
     description: valueOf("description"),
     bid: Math.floor(Number(valueOf("bid"))),
+    category: valueOf("category"),
   };
+}
+
+function selectedCategory() {
+  const category = claimFields().category;
+  return CATEGORIES.includes(category) ? category : "";
 }
 
 function showClaimStep(step) {
@@ -172,6 +219,7 @@ function fillReview() {
   const draft = claimFields();
   document.querySelector("#review-rank").textContent = "#1";
   document.querySelector("#review-bid").textContent = rupee.format(draft.bid);
+  document.querySelector("#review-category").textContent = selectedCategory();
   document.querySelector("#review-listing").textContent = draft.name;
 }
 
@@ -184,10 +232,20 @@ function openJoinForm() {
   window.setTimeout(() => joinForm.querySelector("input").focus(), 250);
 }
 
+function renderEmptyState() {
+  const empty = document.querySelector("#category-empty");
+  if (!empty || !board) return;
+  const isEmpty = listings.length === 0;
+  empty.hidden = !isEmpty;
+  board.hidden = isEmpty;
+}
+
 function renderBoard(highlightId) {
+  if (!board) return;
   sortListings();
   const header = board.querySelector(".board-row-head");
   board.replaceChildren(header);
+  renderEmptyState();
 
   listings.forEach((listing, index) => {
     const rank = index + 1;
@@ -213,7 +271,7 @@ function renderBoard(highlightId) {
     row.innerHTML = `
       <span class="rank-num ${rank <= 3 ? "top" : ""}">#${rank}</span>
       <div class="listing">
-        <h3>${title}</h3>
+        <h3>${title}${listing.category ? ` <span class="listing-category">${escapeHtml(listing.category)}</span>` : ""}</h3>
         ${website}
         <p>${escapeHtml(listing.description)}</p>
       </div>
@@ -228,10 +286,22 @@ function renderBoard(highlightId) {
 }
 
 async function loadListings() {
-  const { data, error } = await supabaseClient
+  let query = supabaseClient
     .from(tableName)
-    .select("id, created_at, name, website_url, description, bid_amount")
+    .select("id, created_at, name, website_url, description, bid_amount, category")
     .order("bid_amount", { ascending: false });
+
+  if (isCategoryPage) {
+    const category = pageCategory();
+    if (!category) {
+      listings = [];
+      renderBoard();
+      return;
+    }
+    query = query.ilike("category", category);
+  }
+
+  const { data, error } = await query;
 
   if (error) throw error;
 
@@ -254,7 +324,7 @@ function openOutbid(listing) {
   outbidInput.select();
 }
 
-board.addEventListener("click", (event) => {
+board?.addEventListener("click", (event) => {
   const button = event.target.closest(".btn-outbid");
   if (!button) return;
   const listing = listings.find((item) => item.id === button.dataset.id);
@@ -328,66 +398,97 @@ openFormButtons.forEach((button) => {
   button.addEventListener("click", openJoinForm);
 });
 
-closeFormButton.addEventListener("click", () => {
-  joinForm.hidden = true;
-  openFormButton.hidden = false;
-  showClaimStep("details");
-  setFormStatus("");
-});
+if (joinForm) {
+  closeFormButton.addEventListener("click", () => {
+    joinForm.hidden = true;
+    openFormButton.hidden = false;
+    showClaimStep("details");
+    setFormStatus("");
+  });
 
-joinForm.querySelector('input[name="bid"]').addEventListener("input", refreshBidGuidance);
+  joinForm.querySelector('input[name="bid"]').addEventListener("input", refreshBidGuidance);
 
-document.querySelector("#claim-to-bid").addEventListener("click", () => {
-  const draft = claimFields();
-  const href = safeUrl(draft.url);
-  if (!draft.name || !href || !draft.description) {
-    setFormStatus("Enter a name, valid website URL, and short description.");
-    return;
-  }
-  joinForm.querySelector('input[name="url"]').value = href;
-  showClaimStep("bid");
-  refreshBidGuidance();
-  joinForm.querySelector('input[name="bid"]').focus();
-});
+  document.querySelector("#claim-to-category").addEventListener("click", () => {
+    const draft = claimFields();
+    const href = safeUrl(draft.url);
+    if (!draft.name || !href || !draft.description) {
+      setFormStatus("Enter a name, valid website URL, and short description.");
+      return;
+    }
+    joinForm.querySelector('input[name="url"]').value = href;
+    showClaimStep("category");
+    joinForm.querySelector('select[name="category"]').focus();
+  });
 
-document.querySelector("#claim-back-details").addEventListener("click", () => {
-  showClaimStep("details");
-  joinForm.querySelector('input[name="name"]').focus();
-});
+  document.querySelector("#claim-back-details").addEventListener("click", () => {
+    showClaimStep("details");
+    joinForm.querySelector('input[name="name"]').focus();
+  });
 
-document.querySelector("#claim-to-review").addEventListener("click", () => {
-  if (!refreshBidGuidance()) {
-    setFormStatus("Your bid must be higher than the current #1 bid.");
-    return;
-  }
-  fillReview();
-  showClaimStep("review");
-});
-
-document.querySelector("#claim-back-bid").addEventListener("click", () => {
-  showClaimStep("bid");
-  joinForm.querySelector('input[name="bid"]').focus();
-});
-
-document.querySelector("#claim-to-payment").addEventListener("click", () => {
-  if (!refreshBidGuidance()) {
+  document.querySelector("#claim-to-bid").addEventListener("click", () => {
+    if (!selectedCategory()) {
+      setFormStatus("Choose a category to continue.");
+      return;
+    }
     showClaimStep("bid");
-    setFormStatus("Your bid must be higher than the current #1 bid.");
-    return;
-  }
-  showClaimStep("payment");
-});
+    refreshBidGuidance();
+    joinForm.querySelector('input[name="bid"]').focus();
+  });
 
-document.querySelector("#claim-edit-bid").addEventListener("click", () => {
-  showClaimStep("bid");
-  joinForm.querySelector('input[name="bid"]').focus();
-});
+  document.querySelector("#claim-back-category").addEventListener("click", () => {
+    showClaimStep("category");
+    joinForm.querySelector('select[name="category"]').focus();
+  });
 
-document.querySelector("#claim-back-review").addEventListener("click", () => {
-  showClaimStep("review");
-});
+  document.querySelector("#claim-to-review").addEventListener("click", () => {
+    if (!selectedCategory()) {
+      showClaimStep("category");
+      setFormStatus("Choose a category to continue.");
+      return;
+    }
+    if (!refreshBidGuidance()) {
+      setFormStatus("Your bid must be higher than the current #1 bid.");
+      return;
+    }
+    fillReview();
+    showClaimStep("review");
+  });
+
+  document.querySelector("#claim-back-bid").addEventListener("click", () => {
+    showClaimStep("bid");
+    joinForm.querySelector('input[name="bid"]').focus();
+  });
+
+  document.querySelector("#claim-to-payment").addEventListener("click", () => {
+    if (!selectedCategory()) {
+      showClaimStep("category");
+      setFormStatus("Choose a category to continue.");
+      return;
+    }
+    if (!refreshBidGuidance()) {
+      showClaimStep("bid");
+      setFormStatus("Your bid must be higher than the current #1 bid.");
+      return;
+    }
+    showClaimStep("payment");
+  });
+
+  document.querySelector("#claim-edit-bid").addEventListener("click", () => {
+    showClaimStep("bid");
+    joinForm.querySelector('input[name="bid"]').focus();
+  });
+
+  document.querySelector("#claim-back-review").addEventListener("click", () => {
+    showClaimStep("review");
+  });
+}
 
 async function start() {
+  if (isCategoryPage) {
+    applyCategoryHeading();
+    markActiveCategoryLinks();
+  }
+
   supabaseClient = createClient();
   if (!supabaseClient) {
     showToast("Add your Supabase Project URL and publishable key in config.js.");
@@ -400,6 +501,10 @@ async function start() {
   } catch (error) {
     showToast(error.message || "Could not load listings from Supabase.");
     renderBoard();
+  }
+
+  if (joinForm && window.location.hash === "#join") {
+    openJoinForm();
   }
 }
 

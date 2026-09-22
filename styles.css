@@ -47,12 +47,14 @@ a {
 .hero,
 .steps,
 .board-section,
+.categories-section,
 .cta-band,
 .trust,
 .join-section,
 .about-page,
 .contact-page,
 .legal-page,
+.category-page,
 .site-footer {
   width: min(1080px, calc(100% - 32px));
   margin-inline: auto;
@@ -340,6 +342,20 @@ h1 {
   text-decoration: underline;
 }
 
+.listing-category {
+  display: inline-block;
+  margin-left: 10px;
+  padding: 3px 8px;
+  border: 1px solid var(--line);
+  color: var(--muted);
+  font-family: Manrope, system-ui, sans-serif;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  vertical-align: middle;
+}
+
 .listing p {
   margin: 0;
   color: var(--muted);
@@ -374,6 +390,35 @@ h1 {
   margin: 0 0 14px;
   color: var(--ink);
   font-weight: 700;
+}
+
+.categories-section {
+  padding: 8px 0 72px;
+}
+
+.category-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.category-nav a {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--line);
+  padding: 12px 16px;
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 0.86rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.category-nav a:hover,
+.category-nav a:target,
+.category-nav a.is-current {
+  color: var(--ink);
+  border-color: var(--white);
 }
 
 .cta-band {
@@ -520,6 +565,7 @@ h1 {
 
 .join-form input,
 .join-form textarea,
+.join-form select,
 .outbid-dialog input {
   width: 100%;
   border: 1px solid var(--line);
@@ -530,8 +576,20 @@ h1 {
   font: inherit;
 }
 
+.join-form select {
+  color-scheme: dark;
+  appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, var(--muted) 50%),
+    linear-gradient(135deg, var(--muted) 50%, transparent 50%);
+  background-position: calc(100% - 20px) 50%, calc(100% - 14px) 50%;
+  background-size: 6px 6px, 6px 6px;
+  background-repeat: no-repeat;
+  padding-right: 36px;
+}
+
 .join-form input:focus,
 .join-form textarea:focus,
+.join-form select:focus,
 .outbid-dialog input:focus {
   outline: 1px solid var(--white);
   border-color: var(--white);
@@ -624,11 +682,35 @@ h1 {
   padding: 56px 0 88px;
 }
 
+.category-page {
+  padding: 40px 0 88px;
+}
+
 .about-page h1,
 .contact-page h1,
-.legal-page h1 {
+.legal-page h1,
+.category-page h1 {
   max-width: 16ch;
   font-size: clamp(3rem, 8vw, 5.6rem);
+}
+
+.category-page h1 {
+  max-width: 18ch;
+}
+
+.category-empty {
+  margin: 0 0 48px;
+  padding: 48px 28px;
+  border: 1px solid var(--line);
+  background: var(--panel);
+  text-align: center;
+}
+
+.category-empty p {
+  margin: 0 0 28px;
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: clamp(1.6rem, 4vw, 2.4rem);
+  line-height: 1.2;
 }
 
 .about-intro {
@@ -745,7 +827,7 @@ h1 {
     display: none;
   }
 
-  .nav a:not(.nav-about):not(.nav-contact):not(.nav-home) {
+  .nav a:not(.nav-about):not(.nav-contact):not(.nav-home):not(.nav-categories) {
     display: none;
   }
 
