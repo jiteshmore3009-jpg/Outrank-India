@@ -50,6 +50,9 @@ a {
 .cta-band,
 .trust,
 .join-section,
+.about-page,
+.contact-page,
+.legal-page,
 .site-footer {
   width: min(1080px, calc(100% - 32px));
   margin-inline: auto;
@@ -557,6 +560,26 @@ h1 {
   text-transform: uppercase;
 }
 
+.footer-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 22px;
+  margin: 0 0 18px;
+  letter-spacing: 0.04em;
+  text-transform: none;
+}
+
+.footer-nav a {
+  color: var(--muted);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.88rem;
+}
+
+.footer-nav a:hover {
+  color: var(--ink);
+}
+
 .outbid-dialog {
   width: min(420px, 92vw);
   margin: auto;
@@ -596,9 +619,133 @@ h1 {
   font-weight: 700;
 }
 
+.about-page,
+.contact-page {
+  padding: 56px 0 88px;
+}
+
+.about-page h1,
+.contact-page h1,
+.legal-page h1 {
+  max-width: 16ch;
+  font-size: clamp(3rem, 8vw, 5.6rem);
+}
+
+.about-intro {
+  max-width: 46ch;
+  margin: 28px 0 64px;
+  font-size: 1.15rem;
+  color: var(--muted);
+}
+
+.about-block {
+  max-width: 62ch;
+  padding: 36px 0;
+  border-top: 1px solid var(--line);
+}
+
+.about-block h2 {
+  margin: 0 0 16px;
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+  line-height: 1.1;
+}
+
+.about-block p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.about-block p + p {
+  margin-top: 14px;
+}
+
+.about-block a {
+  color: var(--ink);
+}
+
+.about-steps {
+  list-style: none;
+  margin: 28px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 28px;
+}
+
+.about-steps li {
+  display: grid;
+  gap: 8px;
+}
+
+.about-steps span {
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.about-steps strong {
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: 1.45rem;
+  font-weight: 500;
+}
+
+.about-steps p {
+  margin: 0;
+}
+
+.contact-email {
+  margin: 0 0 16px;
+}
+
+.contact-email a {
+  color: var(--ink);
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: clamp(1.6rem, 4vw, 2.4rem);
+  text-decoration: none;
+}
+
+.contact-email a:hover {
+  text-decoration: underline;
+}
+
+.contact-form {
+  margin-top: 28px;
+}
+
+.contact-thanks {
+  margin: 28px 0 0;
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: clamp(1.6rem, 4vw, 2.2rem);
+  line-height: 1.2;
+}
+
+.legal-updated {
+  margin: 0 0 40px;
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.legal-page .about-block h2 {
+  font-size: clamp(1.4rem, 3vw, 1.9rem);
+}
+
+.legal-page .about-block ul {
+  margin: 14px 0 0;
+  padding-left: 1.2em;
+  color: var(--muted);
+}
+
+.legal-page .about-block li + li {
+  margin-top: 8px;
+}
+
 @media (max-width: 960px) {
-  .nav,
   .board-row-head {
+    display: none;
+  }
+
+  .nav a:not(.nav-about):not(.nav-contact):not(.nav-home) {
     display: none;
   }
 
